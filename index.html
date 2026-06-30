@@ -101,7 +101,6 @@
       font-size: 0.82rem;
       color: var(--ink-soft);
     }
-    .empty { text-align: center; color: var(--ink-soft); padding: 60px 0; font-size: 0.95rem; }
     .foot {
       margin-top: 56px;
       text-align: center;
@@ -115,9 +114,9 @@
 <body>
   <div class="wrap">
     <header class="header">
-      <span class="brand-mark">＋－</span>
+      <span class="brand-mark">＋－×</span>
       <h1 class="title">算术练习纸</h1>
-      <p class="subtitle">点击下方任一练习集开始口算与竖式训练</p>
+      <p class="subtitle">点击下方任一练习集开始训练</p>
     </header>
     <main class="grid" id="list" aria-label="练习集列表"></main>
     <footer class="foot">
@@ -127,14 +126,14 @@
   <script>
     /* 练习集配置：新增只需在数组里追加一项即可 */
     const sets = [
-      { tag: "test1", title: "100 以内加减法", desc: "40 道口算 + 8 道竖式计算，进位/退位各 ≤2 题", path: "test1/" }
-      // { tag: "test2", title: "乘法口诀", desc: "九九乘法表练习", path: "test2/" }
+      { tag: "test1", title: "100 以内加减法", desc: "40 道口算 + 8 道竖式计算，进位/退位各 ≤2 题", path: "test1/" },
+      { tag: "test2", title: "九九乘法口诀", desc: "40 道口算 + 8 道竖式乘法，1~9 乘法表练习", path: "test2/" },
+      { tag: "test3", title: "混合运算", desc: "40 道口算 + 8 道竖式，加/减/乘 三种运算混合", path: "test3/" }
     ];
     function render() {
       const list = document.getElementById("list");
       if (!sets.length) { list.innerHTML = '<div class="empty">暂无练习集</div>'; return; }
-      /* 动态时间戳：每次打开目录页都生成新值，点击卡片时附加在 URL 后，
-         绕过浏览器缓存，确保拿到最新版本 */
+      /* 动态时间戳：每次打开目录页都生成新值，附加在 URL 后绕过缓存 */
       const ts = Date.now();
       list.innerHTML = sets.map(function (s) {
         return '<a class="card" href="' + s.path + '?v=' + ts + '">' +
