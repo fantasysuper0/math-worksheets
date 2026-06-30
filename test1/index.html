@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <!-- 移动端适配，打印时保证宽度合理 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>口算与计算练习 · 数学练习纸生成器</title>
+  <!-- 开源字体：Fraunces 用于标题，IBM Plex Mono 用于数字 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 顶部操作栏：仅在屏幕显示，打印时隐藏 -->
+  <header class="controls" role="toolbar" aria-label="操作栏">
+    <div class="brand">
+      <span class="brand-mark">＋－</span>
+      <span class="brand-text">算术练习纸</span>
+    </div>
+    <div class="actions">
+      <!-- 答案显隐切换，方便家长/老师批改 -->
+      <button id="toggleAnswer" class="btn btn-ghost" type="button" aria-pressed="false">显示答案</button>
+      <!-- 重新生成一组题目 -->
+      <button id="regenerate" class="btn btn-ghost" type="button">重新生成</button>
+      <!-- 调用浏览器打印 -->
+      <button id="printBtn" class="btn btn-primary" type="button">打印 / 另存 PDF</button>
+    </div>
+  </header>
+
+  <!-- 练习纸主体：A4 纸张视觉，打印时铺满页面 -->
+  <main class="worksheet" id="worksheet">
+    <!-- 页眉：标题 + 姓名/日期信息条 -->
+    <section class="sheet-header">
+      <h1 class="sheet-title">口算与计算练习</h1>
+      <div class="meta">
+        <span>姓名：<span class="blank"></span></span>
+        <span>班级：<span class="blank"></span></span>
+        <span>日期：<span class="blank"></span></span>
+        <span>用时：<span class="blank"></span></span>
+      </div>
+    </section>
+
+    <!-- 第一部分：口算 30 题 -->
+    <section class="block">
+      <h2 class="block-title">一、口算 <small>(共 40 题)</small></h2>
+      <!-- 题目由 JS 动态渲染 -->
+      <ol class="oral-grid" id="oralList" aria-label="口算题"></ol>
+    </section>
+
+    <!-- 第二部分：竖式计算 8 题 -->
+    <section class="block">
+      <h2 class="block-title">二、竖式计算 <small>(共 8 题，请列竖式计算)</small></h2>
+      <ol class="vertical-grid" id="writtenList" aria-label="竖式计算题"></ol>
+    </section>
+  </main>
+
+  <!-- 页脚信息 -->
+  <footer class="footnote">
+    <span>本练习纸由算术练习纸生成器自动生成 · 每次刷新生成新题目</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
