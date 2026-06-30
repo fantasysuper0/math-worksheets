@@ -1,0 +1,333 @@
+/* ============================================================
+   设计令牌 (Design Tokens)
+   - 屏幕呈现：暖米色纸张质感 + 墨色文字
+   - 打印呈现：纯白底黑字，去除阴影与背景
+   - 字体：Fraunces (标题/中文衬线 Noto Serif SC) + IBM Plex Mono (数字)
+   ============================================================ */
+:root {
+  --paper: #f4ede0;          /* 屏幕纸张底色 */
+  --paper-edge: #e8dfcc;     /* 纸张边缘阴影 */
+  --ink: #1a2233;            /* 主文字墨色 */
+  --ink-soft: #4a5466;       /* 次级文字 */
+  --accent: #7a3b2e;         /* 点缀色：印章红棕 */
+  --rule: #d8cdb6;           /* 分隔线 */
+  --blank-line: #8a7f6a;     /* 填空下划线色 */
+
+  --font-display: "Fraunces", "Noto Serif SC", Georgia, serif;
+  --font-cn: "Noto Serif SC", "Fraunces", serif;
+  --font-num: "IBM Plex Mono", "Menlo", monospace;
+}
+
+/* 全局重置 --------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-cn);
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 600px at 20% -10%, #efe6d4, transparent 60%),
+    var(--paper);
+  min-height: 100vh;
+  line-height: 1.5;
+  padding: 32px 16px 64px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 顶部操作栏 ------------------------------------------------- */
+.controls {
+  max-width: 900px;
+  margin: 0 auto 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand { display: flex; align-items: baseline; gap: 10px; }
+
+.brand-mark {
+  font-family: var(--font-num);
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: -1px;
+}
+
+.brand-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+}
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.btn {
+  font-family: var(--font-cn);
+  font-size: 0.92rem;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: var(--rule);
+  color: var(--ink-soft);
+}
+
+.btn-ghost:hover { background: #fff; border-color: var(--blank-line); }
+
+.btn-ghost[aria-pressed="true"] {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.btn-primary:hover { background: #0d1422; }
+
+/* 练习纸主体 ------------------------------------------------- */
+.worksheet {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fffdf7;
+  padding: 56px 60px 72px;
+  border-radius: 4px;
+  box-shadow:
+    0 1px 0 var(--paper-edge),
+    0 24px 60px -28px rgba(40, 30, 10, 0.35);
+  position: relative;
+}
+
+/* 纸张顶部装饰：一条细红线呼应印章色 */
+.worksheet::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), transparent 70%);
+}
+
+/* 页眉 ------------------------------------------------------- */
+.sheet-header { margin-bottom: 36px; }
+
+.sheet-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.4rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  font-variation-settings: "opsz" 144;
+}
+
+.meta {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+
+.blank {
+  display: inline-block;
+  min-width: 84px;
+  border-bottom: 1px solid var(--blank-line);
+  height: 1.1em;
+  vertical-align: bottom;
+}
+
+/* 区块 ------------------------------------------------------- */
+.block { margin-top: 8px; }
+.block + .block { margin-top: 44px; }
+
+.block-title {
+  font-family: var(--font-cn);
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--ink);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 22px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.block-title small {
+  font-family: var(--font-num);
+  font-weight: 400;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   口算题网格：每行 5 题
+   ============================================================ */
+.oral-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px 22px;
+}
+
+.oral-grid li {
+  font-family: var(--font-num);
+  font-size: 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 答案空格：纯留白，无下划线 */
+.oral-grid .blank-line {
+  flex: 1;
+  min-width: 24px;
+  height: 1.1em;
+}
+
+/* 答案态：显隐答案时给空格填入结果 */
+.oral-grid .answer {
+  visibility: hidden;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+body.show-answer .oral-grid .answer { visibility: visible; }
+
+/* ============================================================
+   竖式计算题：每行 4 题，横式题目 + 下方手写竖式区
+   ============================================================ */
+.vertical-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px 24px;
+}
+
+.vertical-grid li {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  /* 题目行 + 手写区纵向排列 */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 题目行：横式 a op b = ___ */
+.vertical-grid .q-line {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* 答案空格：纯留白，无下划线 */
+.vertical-grid .q-line .blank-line {
+  flex: 1;
+  min-width: 30px;
+  height: 1.1em;
+}
+
+/* 手写竖式区：约 4~5 行书写空间 */
+.vertical-grid .work-area {
+  min-height: 7em;              /* 约 4~5 行竖式书写 */
+}
+
+.vertical-grid .answer {
+  visibility: hidden;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+body.show-answer .vertical-grid .answer { visibility: visible; }
+
+/* 页脚 ------------------------------------------------------- */
+.footnote {
+  max-width: 900px;
+  margin: 20px auto 0;
+  text-align: center;
+  font-family: var(--font-num);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  opacity: 0.8;
+}
+
+/* ============================================================
+   打印样式 (Print Styles)
+   - 去除操作栏、页脚与纸张阴影
+   - 纯白底、纯黑字，保证打印清晰
+   - 设置 A4 页边距，避免题目被切断
+   ============================================================ */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 14mm 14mm 14mm;
+  }
+
+  body {
+    background: #fff;
+    padding: 0;
+  }
+
+  .controls,
+  .footnote { display: none !important; }
+
+  .worksheet {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .worksheet::before { display: none; }
+
+  .sheet-title { font-size: 1.9rem; }
+
+  /* 题目不跨页切断 */
+  .vertical-grid li,
+  .oral-grid li { break-inside: avoid; }
+
+  /* 打印时强制保持 5 列口算 / 4 列竖式，避免被响应式降列影响 */
+  .oral-grid { grid-template-columns: repeat(5, 1fr) !important; }
+  .vertical-grid { grid-template-columns: repeat(4, 1fr) !important; }
+
+  /* 打印时确保颜色如实输出 */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* 响应式：窄屏降列（仅作用于屏幕，不影响打印） ---------- */
+@media screen and (max-width: 760px) {
+  .oral-grid { grid-template-columns: repeat(3, 1fr); gap: 16px 18px; }
+  .vertical-grid { grid-template-columns: repeat(2, 1fr); }
+  .worksheet { padding: 36px 28px 48px; }
+  .sheet-title { font-size: 1.9rem; }
+}
+
+@media screen and (max-width: 420px) {
+  .oral-grid { grid-template-columns: repeat(2, 1fr); }
+  .vertical-grid { grid-template-columns: 1fr; }
+}

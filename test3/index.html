@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>混合运算练习 · 算术练习纸</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="controls" role="toolbar" aria-label="操作栏">
+    <div class="brand">
+      <span class="brand-mark">＋×－</span>
+      <span class="brand-text">混合运算练习</span>
+    </div>
+    <div class="actions">
+      <button id="toggleAnswer" class="btn btn-ghost" type="button" aria-pressed="false">显示答案</button>
+      <button id="regenerate" class="btn btn-ghost" type="button">重新生成</button>
+      <button id="printBtn" class="btn btn-primary" type="button">打印 / 另存 PDF</button>
+    </div>
+  </header>
+
+  <main class="worksheet" id="worksheet">
+    <section class="sheet-header">
+      <h1 class="sheet-title">混合运算练习</h1>
+      <div class="meta">
+        <span>姓名：<span class="blank"></span></span>
+        <span>班级：<span class="blank"></span></span>
+        <span>日期：<span class="blank"></span></span>
+        <span>用时：<span class="blank"></span></span>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="block-title">一、口算</h2>
+      <ol class="oral-grid" id="oralList" aria-label="口算题"></ol>
+    </section>
+
+    <section class="block">
+      <h2 class="block-title">二、竖式计算</h2>
+      <ol class="vertical-grid" id="writtenList" aria-label="竖式计算题"></ol>
+    </section>
+  </main>
+
+  <footer class="footnote">
+    <span>本练习纸由算术练习纸生成器自动生成 · 每次刷新生成新题目</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
