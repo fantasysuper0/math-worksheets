@@ -200,11 +200,106 @@
   }
 
   /**
+   * 检测当前浏览器是否为受限浏览器
+   * 国产移动浏览器（UC/夸克/QQ/360/百度/华为/荣耀自带等）普遍
+   * 静默拦截 window.print()，需给出替代提示
+   * @returns {boolean}
+   */
+  function isRestrictedBrowser() {
+    const ua = navigator.userAgent.toLowerCase();
+    // 关键词命中即视为受限浏览器
+    const keywords = [
+      "micromessenger", // 微信内置
+      "qqbrowser", "qq/", // QQ 浏览器
+      "ucbrowser", "ucweb", // UC 浏览器
+      "quark", // 夸克
+      "qihoo", "360se", "360browser", // 360
+      "baidubrowser", "baidu", // 百度
+      "huawei", "honor", "hbpc", // 华为 / 荣耀自带
+      "mqqbrowser", "tbs", // X5 / TBS 内核
+      "sogou", // 搜狗
+      "liebao", // 猎豹
+      "maxthon", // 遨游
+      "micromessenger" // 兜底
+    ];
+    return keywords.some((k) => ua.indexOf(k) !== -1);
+  }
+
+  /**
+   * 显示打印提示弹窗：引导用户在受限浏览器中完成打印
+   * 弹窗样式全部内联，避免依赖外部 CSS
+   */
+  function showPrintTip() {
+    // 避免重复创建
+    if (document.getElementById("printTipMask")) return;
+
+    const mask = document.createElement("div");
+    mask.id = "printTipMask";
+    Object.assign(mask.style, {
+      position: "fixed",
+      inset: "0",
+      background: "rgba(0,0,0,0.45)",
+      zIndex: "9999",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "24px"
+    });
+
+    // 弹窗卡片
+    const card = document.createElement("div");
+    Object.assign(card.style, {
+      background: "#fffdf7",
+      borderRadius: "12px",
+      padding: "28px 24px 20px",
+      maxWidth: "380px",
+      width: "100%",
+      fontFamily: '"Noto Serif SC", serif',
+      color: "#1a2233",
+      boxShadow: "0 20px 50px -20px rgba(0,0,0,0.5)"
+    });
+
+    card.innerHTML =
+      '<div style="font-size:1.15rem;font-weight:600;margin-bottom:12px;">该浏览器不支持直接打印</div>' +
+      '<div style="font-size:0.9rem;line-height:1.7;color:#4a5466;margin-bottom:16px;">' +
+        '当前浏览器（如荣耀/华为/UC/夸克/QQ 等自带浏览器）禁用了打印功能，请用以下任一方式：' +
+      '</div>' +
+      '<ol style="font-size:0.88rem;line-height:1.75;color:#1a2233;padding-left:1.2em;margin-bottom:18px;">' +
+        '<li>换用 <b>Chrome</b> 或 <b>Safari</b> 浏览器打开本页，再点打印；</li>' +
+        '<li>浏览器菜单里找 <b>"网页转 PDF"</b> 或 <b>"另存为 PDF"</b>；</li>' +
+        '<li>长按页面 → <b>分享 → 存为 PDF</b>。</li>' +
+      '</ol>' +
+      '<button id="printTipClose" style="' +
+        'width:100%;padding:11px;border:none;border-radius:8px;' +
+        'background:#1a2233;color:#fffdf7;font-size:0.95rem;font-weight:600;cursor:pointer;">' +
+        '知道了</button>';
+
+    mask.appendChild(card);
+    document.body.appendChild(mask);
+
+    // 点击遮罩或按钮关闭
+    const close = () => mask.remove();
+    card.querySelector("#printTipClose").addEventListener("click", close);
+    mask.addEventListener("click", (e) => { if (e.target === mask) close(); });
+  }
+
+  /**
    * 打印：调用浏览器原生打印对话框（亦可另存为 PDF）
+   * 受限浏览器静默拦截 print()，需先检测并给出替代提示
    */
   function bindPrint() {
     document.getElementById("printBtn").addEventListener("click", () => {
-      window.print();
+      // 受限浏览器：直接弹提示，避免无效调用
+      if (isRestrictedBrowser()) {
+        showPrintTip();
+        return;
+      }
+      // 标准浏览器：尝试调用打印，失败则降级提示
+      try {
+        window.print();
+      } catch (e) {
+        showPrintTip();
+      }
     });
   }
 
