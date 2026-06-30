@@ -200,27 +200,24 @@
   }
 
   /**
-   * 检测当前浏览器是否为受限浏览器
-   * 国产移动浏览器（UC/夸克/QQ/360/百度/华为/荣耀自带等）普遍
-   * 静默拦截 window.print()，需给出替代提示
+   * 检测当前浏览器是否为已知"静默拦截 print()"的受限浏览器
+   * 注意：华为/荣耀自带浏览器实际支持打印，不可误判，故不在此列
+   * 仅保留确认会静默拦截 print 的浏览器（微信内置、UC、夸克、QQ、360、百度等）
    * @returns {boolean}
    */
   function isRestrictedBrowser() {
     const ua = navigator.userAgent.toLowerCase();
-    // 关键词命中即视为受限浏览器
     const keywords = [
-      "micromessenger", // 微信内置
+      "micromessenger", // 微信内置（WebView，确定不支持）
       "qqbrowser", "qq/", // QQ 浏览器
       "ucbrowser", "ucweb", // UC 浏览器
       "quark", // 夸克
       "qihoo", "360se", "360browser", // 360
-      "baidubrowser", "baidu", // 百度
-      "huawei", "honor", "hbpc", // 华为 / 荣耀自带
+      "baidubrowser", // 百度（精确匹配，避免误伤）
       "mqqbrowser", "tbs", // X5 / TBS 内核
       "sogou", // 搜狗
       "liebao", // 猎豹
-      "maxthon", // 遨游
-      "micromessenger" // 兜底
+      "maxthon" // 遨游
     ];
     return keywords.some((k) => ua.indexOf(k) !== -1);
   }
@@ -285,21 +282,35 @@
 
   /**
    * 打印：调用浏览器原生打印对话框（亦可另存为 PDF）
-   * 受限浏览器静默拦截 print()，需先检测并给出替代提示
+   * 策略：
+   *   1) 已知会静默拦截 print 的浏览器（微信/UC/夸克等）→ 直接弹提示
+   *   2) 其余浏览器（含荣耀/华为自带）→ 先调用 print()，
+   *      监听 beforeprint 事件判断是否真正唤起；
+   *      若 1.2 秒内未触发，说明被静默拦截，再弹提示兜底
    */
   function bindPrint() {
     document.getElementById("printBtn").addEventListener("click", () => {
-      // 受限浏览器：直接弹提示，避免无效调用
+      // 1. 已知受限浏览器：直接提示
       if (isRestrictedBrowser()) {
         showPrintTip();
         return;
       }
-      // 标准浏览器：尝试调用打印，失败则降级提示
+      // 2. 其余浏览器：尝试调用，用 beforeprint 判断是否成功
+      let printed = false;
+      const onBefore = () => { printed = true; };
+      window.addEventListener("beforeprint", onBefore, { once: true });
       try {
         window.print();
       } catch (e) {
+        window.removeEventListener("beforeprint", onBefore);
         showPrintTip();
+        return;
       }
+      // 3. 1.2 秒后检查：若 beforeprint 未触发，视为静默拦截
+      setTimeout(() => {
+        window.removeEventListener("beforeprint", onBefore);
+        if (!printed) showPrintTip();
+      }, 1200);
     });
   }
 
